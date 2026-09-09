@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Painel Eng. Elétrica | Master</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        :root {
+            --primary: #0056b3;
+            --primary-hover: #003d82;
+            --bg-color: #f4f7fb;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+            --border-color: #e2e8f0;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); }
+        .app-container { display: flex; height: 100vh; overflow: hidden; }
+
+        /* Navbar & Menu */
+        .navbar { width: 250px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; }
+        .logo { display: flex; align-items: center; gap: 10px; padding: 0 20px; font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 30px; }
+        .nav-links { list-style: none; display: flex; flex-direction: column; }
+        .nav-links li a { display: flex; align-items: center; gap: 15px; padding: 15px 20px; text-decoration: none; color: var(--text-muted); font-weight: 600; transition: all 0.3s; }
+        .nav-links li a:hover, .nav-links li a.active { background-color: rgba(0, 86, 179, 0.05); color: var(--primary); border-right: 4px solid var(--primary); }
+
+        /* Content & Sections */
+        .content { flex: 1; overflow-y: auto; padding: 30px; }
+        .top-header { margin-bottom: 30px; }
+        .top-header h1 { font-size: 1.8rem; color: var(--text-main); }
+        .top-header p { color: var(--text-muted); }
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background-color: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .card-icon { font-size: 2rem; color: var(--primary); margin-bottom: 15px; }
+        .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
+        .card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+
+        /* Forms */
+        h2 { margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        input, select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; outline: none; }
+        input:focus, select:focus { border-color: var(--primary); }
+        .btn-primary { width: 100%; padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        /* Results */
+        .result-box { margin-top: 20px; padding: 20px; background-color: #e8f4fd; border-left: 4px solid var(--primary); border-radius: 8px; font-weight: 600; text-align: center; font-size: 1.1rem; }
+        .resultado-aviso { color: var(--danger); background-color: #fde8e8; border-left-color: var(--danger); }
+        .resultado-sucesso { color: var(--success); background-color: #e8fdf0; border-left-color: var(--success); }
+
+        /* Normas */
+        .normas-list { list-style: none; }
+        .normas-list li { background: var(--card-bg); padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .normas-list li strong { color: var(--primary); display: block; margin-bottom: 5px; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .navbar { width: 100%; height: 70px; flex-direction: row; justify-content: space-between; padding: 0; position: fixed; bottom: 0; z-index: 1000; border-right: none; border-top: 1px solid var(--border-color); }
+            .logo { display: none; }
+            .nav-links { flex-direction: row; width: 100%; justify-content: space-around; align-items: center; }
+            .nav-links li a { flex-direction: column; padding: 10px; font-size: 0.75rem; gap: 5px; border-right: none; }
+            .nav-links li a span { display: block; }
+            .nav-links li a:hover, .nav-links li a.active { border-top: 4px solid var(--primary); background-color: transparent; }
+            .content { padding: 20px; padding-bottom: 90px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navegação -->
+        <nav class="navbar">
+            <div class="logo"><i class="fa-solid fa-bolt"></i><span>EletroApp</span></div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-target="home"><i class="fa-solid fa-house"></i> <span>Início</span></a></li>
+                <li><a href="#" data-target="dimensionamento"><i class="fa-solid fa-plug"></i> <span>Carga</span></a></li>
+                <li><a href="#" data-target="queda-tensao"><i class="fa-solid fa-arrow-trend-down"></i> <span>Queda V</span></a></li>
+                <li><a href="#" data-target="fator-potencia"><i class="fa-solid fa-chart-pie"></i> <span>Fator Pot.</span></a></li>
+                <li><a href="#" data-target="normas"><i class="fa-solid fa-book"></i> <span>Normas</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <main class="content">
+            <header class="top-header">
+                <h1>Painel de Projetos Elétricos</h1>
+                <p>Gestão de Projetos Industriais e Prediais</p>
+            </header>
+
+            <!-- HOME -->
+            <section id="home" class="view-section active">
+                <div class="dashboard-cards">
+                    <div class="card" onclick="document.querySelector('[data-target=\'dimensionamento\']').click()">
+                        <i class="fa-solid fa-plug card-icon"></i>
+                        <h3>Dimensionamento</h3><p>Calcule a corrente de projeto (Ib).</p>
+                    </div>
+                    <div class="card" onclick="document.querySelector('[data-target=\'queda-tensao\']').click()">
+                        <i class="fa-solid fa-arrow-trend-down card-icon"></i>
+                        <h3>Queda de Tensão</h3><p>Valide a seção dos condutores.</p>
+                    </div>
+                    <div class="card" onclick="document.querySelector('[data-target=\'fator-potencia\']').click()">
+                        <i class="fa-solid fa-chart-pie card-icon"></i>
+                        <h3>Fator de Potência</h3><p>Dimensione o banco de capacitores.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DIMENSIONAMENTO -->
+            <section id="dimensionamento" class="view-section">
+                <h2>Cálculo de Corrente de Projeto (Ib)</h2>
+                <div class="form-group"><label>Potência (W):</label><input type="number" id="dim-potencia" placeholder="Ex: 5000"></div>
+                <div class="form-group"><label>Tensão (V):</label><select id="dim-tensao"><option value="127">127V</option><option value="220">220V</option><option value="380">380V</option></select></div>
+                <div class="form-group"><label>Sistema:</label><select id="dim-sistema"><option value="1">Monofásico / Bifásico</option><option value="3">Trifásico</option></select></div>
+                <div class="form-group"><label>Fator de Potência:</label><input type="number" id="dim-fp" value="0.92" step="0.01"></div>
+                <button class="btn-primary" onclick="calcularCorrente()">Calcular Corrente</button>
+                <div class="result-box" id="dim-resultado">Resultado aparecerá aqui.</div>
+            </section>
+
+            <!-- QUEDA DE TENSÃO -->
+            <section id="queda-tensao" class="view-section">
+                <h2>Cálculo de Queda de Tensão Unitária</h2>
+                <div class="form-group"><label>Corrente do Circuito (A):</label><input type="number" id="qt-corrente" placeholder="Ex: 32"></div>
+                <div class="form-group"><label>Comprimento do Circuito (m):</label><input type="number" id="qt-comprimento" placeholder="Ex: 50"></div>
+                <div class="form-group"><label>Seção do Cabo (mm²):</label><select id="qt-secao"><option value="1.5">1.5 mm²</option><option value="2.5">2.5 mm²</option><option value="4">4.0 mm²</option><option value="6">6.0 mm²</option><option value="10">10.0 mm²</option><option value="16">16.0 mm²</option></select></div>
+                <div class="form-group"><label>Tensão do Sistema (V):</label><input type="number" id="qt-tensao" value="220"></div>
+                <button class="btn-primary" onclick="calcularQuedaTensao()">Calcular Queda (%)</button>
+                <div class="result-box" id="qt-resultado">Resultado aparecerá aqui.</div>
+            </section>
+
+            <!-- FATOR DE POTÊNCIA -->
+            <section id="fator-potencia" class="view-section">
+                <h2>Correção do Fator de Potência</h2>
+                <div class="form-group"><label>Potência Ativa (kW):</label><input type="number" id="fp-potencia" placeholder="Ex: 100"></div>
+                <div class="form-group"><label>FP Atual:</label><input type="number" id="fp-atual" placeholder="Ex: 0.75" step="0.01"></div>
+                <div class="form-group"><label>FP Desejado:</label><input type="number" id="fp-desejado" value="0.92" step="0.01"></div>
+                <button class="btn-primary" onclick="calcularBancoCapacitores()">Calcular Banco (kVAr)</button>
+                <div class="result-box" id="fp-resultado">Resultado aparecerá aqui.</div>
+            </section>
+
+            <!-- NORMAS -->
+            <section id="normas" class="view-section">
+                <h2>Normas Técnicas (Consulta Rápida)</h2>
+                <ul class="normas-list">
+                    <li><strong>NBR 5410</strong><p>Instalações elétricas de baixa tensão.</p></li>
+                    <li><strong>NR 10</strong><p>Segurança em instalações e serviços em eletricidade.</p></li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts da Aplicação -->
+    <script>
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById(this.getAttribute('data-target')).classList.add('active');
+            });
+        });
+
+        function mostrarResultado(id, html, tipo = 'normal') {
+            const box = document.getElementById(id);
+            box.innerHTML = html;
+            box.className = 'result-box';
+            if (tipo === 'erro') box.classList.add('resultado-aviso');
+            if (tipo === 'sucesso') box.classList.add('resultado-sucesso');
+        }
+
+        function calcularCorrente() {
+            const P = parseFloat(document.getElementById('dim-potencia').value);
+            const V = parseFloat(document.getElementById('dim-tensao').value);
+            const sis = parseInt(document.getElementById('dim-sistema').value);
+            const FP = parseFloat(document.getElementById('dim-fp').value);
+
+            if (!P || !V || !FP) return mostrarResultado('dim-resultado', 'Preencha todos os campos.', 'erro');
+            const corrente = sis === 1 ? P / (V * FP) : P / (Math.sqrt(3) * V * FP);
+            mostrarResultado('dim-resultado', `Corrente (Ib): <br><span style="font-size:1.5em">${corrente.toFixed(2)} A</span>`, 'sucesso');
+        }
+
+        function calcularQuedaTensao() {
+            const I = parseFloat(document.getElementById('qt-corrente').value);
+            const L = parseFloat(document.getElementById('qt-comprimento').value);
+            const S = parseFloat(document.getElementById('qt-secao').value);
+            const V = parseFloat(document.getElementById('qt-tensao').value);
+
+            if (!I || !L || !V) return mostrarResultado('qt-resultado', 'Preencha todos os campos.', 'erro');
+            
+            const quedaVolts = (2 * 0.0172 * L * I) / S;
+            const quedaPerc = (quedaVolts / V) * 100;
+            const tipo = quedaPerc > 4 ? 'erro' : 'sucesso';
+            const aviso = quedaPerc > 4 ? '<br><small>Atenção: Queda superior a 4% (NBR 5410).</small>' : '';
+
+            mostrarResultado('qt-resultado', `Queda: <strong>${quedaVolts.toFixed(2)} V</strong> (${quedaPerc.toFixed(2)}%)${aviso}`, tipo);
+        }
+
+        function calcularBancoCapacitores() {
+            const P = parseFloat(document.getElementById('fp-potencia').value);
+            const fpi = parseFloat(document.getElementById('fp-atual').value);
+            const fpf = parseFloat(document.getElementById('fp-desejado').value);
+
+            if (!P || !fpi || !fpf || fpi >= 1 || fpf > 1) return mostrarResultado('fp-resultado', 'Verifique os valores. FP deve ser < 1.', 'erro');
+            if (fpi >= fpf) return mostrarResultado('fp-resultado', 'O FP atual já é maior ou igual ao desejado.', 'normal');
+            
+            const qc = P * (Math.tan(Math.acos(fpi)) - Math.tan(Math.acos(fpf)));
+            mostrarResultado('fp-resultado', `Banco Necessário: <br><span style="font-size:1.5em">${qc.toFixed(2)} kVAr</span>`, 'sucesso');
+        }
+
+        document.querySelector('[data-target="home"]').click();
+    </script>
+</body>
+</html>
